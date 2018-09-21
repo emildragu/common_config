@@ -2,3 +2,10 @@ au FileType python setl sw=2 sts=2 et
 au FileType ruby setl sw=2 sts=2 et
 au FileType perl setl sw=4 sts=4 et
 au FileType puppet setl sw=2 sts=2 et
+
+if has("autocmd")
+  augroup templates
+    autocmd BufNewFile *.* silent! execute '0r $HOME/.vim/templates/skeleton.'.expand("<afile>:e")
+    autocmd BufNewFile * %substitute#\[:VIM_EVAL:\]\(.\{-\}\)\[:END_EVAL:\]#\=eval(submatch(1))#ge
+  augroup END
+endif
