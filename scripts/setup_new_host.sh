@@ -15,13 +15,26 @@ echo "Done"
 echo "==VIM=="
 width_extra=80
 indentation=4
-yum install -y vim 2>&1 > /dev/null
-grep  -e '^source /etc/vimrc.local' /etc/vimrc
-if [ "$?" != "0" ]; then
-    echo 'source /etc/vimrc.local' >> /etc/vimrc
+
+OS=`cat /etc/os-release|grep '^ID='|sed 's/ID=//'`
+if [ "$OS" == "kali" ]; then
+    apt-get -y install vim 2>&1 > /dev/null
+    VIM_CONFIG='/etc/vim/vimrc'
+    VIM_LOCAL_CONFIG='/etc/vim/vimrc.local'
+
+else
+    yum install -y vim 2>&1 > /dev/null
+    VIM_CONFIG='/etc/vimrc'
+    VIM_LOCAL_CONFIG='/etc/vimrc'
 fi
-if [ ! -f /etc/vimrc.local ]; then
-cat << VIMRCLOCAL > /etc/vimrc.local
+
+grep  -e "^source $VIM_LOCAL_CONFIG" $VIM_CONFIG
+if [ "$?" != "0" ]; then
+    echo "source $VIM_LOCAL_CONFIG" >> $VIM_CONFIG
+fi
+
+if [ ! -f $VIM_LOCAL_CONFIG ]; then
+cat << VIMRCLOCAL > $VIM_CONFIG
 " Created by $0
 highlight OverLength ctermbg=red ctermfg=white guibg=#592929
 highlight ExtraWhitespace ctermbg=red guibg=red
